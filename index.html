@@ -503,7 +503,7 @@
         const config = {
             girlfriendName: "Gülşah",
             nickname: "bebiş", // "bebiş", "sevgilim", "aşkım" vb.
-            heroTitle: "Bitaneme",
+            heroTitle: "Güzel Bebişime",
             heroSubtitle: "Sana birazcık da olsa iyi gelebilmesi için...",
 
             reasons: [
@@ -536,7 +536,7 @@
         document.getElementById('heroSubtitle').innerText = config.heroSubtitle;
         document.getElementById('heroTitle').innerText = config.heroTitle.replace('{name}', config.nickname);
 
-        let currentMood = localStorage.getItem('mini_site_mood') || 'idare';
+        let currentMood = localStorage.getItem('mini_site_mood') || null;
         const moodTexts = {
             kutu: "Bugün biraz zor geçiyor olabilir, öpüyorum her yerindenn. Lütfen kendine fazla yüklenme, hepsi geçcek bebişim",
             idare: "hımm orta diyosun... güzel bi nefes al, her şey birazdan daha iyi olacak. Ben yanındayım sarılıyorumm",
@@ -544,15 +544,25 @@
         };
 
         function setMood(m) {
-            currentMood = m;
-            localStorage.setItem('mini_site_mood', m);
+            if (currentMood === m) {
+                currentMood = null;
+                localStorage.removeItem('mini_site_mood');
+            } else {
+                currentMood = m;
+                localStorage.setItem('mini_site_mood', m);
+            }
             updateMoodUI();
         }
 
         function updateMoodUI() {
-            document.getElementById('moodText').innerText = moodTexts[currentMood];
             document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('mood-' + currentMood).classList.add('active');
+            if (currentMood && moodTexts[currentMood]) {
+                document.getElementById('moodText').innerText = moodTexts[currentMood];
+                const btn = document.getElementById('mood-' + currentMood);
+                if (btn) btn.classList.add('active');
+            } else {
+                document.getElementById('moodText').innerText = '';
+            }
         }
         updateMoodUI();
 
