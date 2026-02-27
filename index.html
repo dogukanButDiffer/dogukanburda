@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sana Özel</title>
+    <style>
+        :root {
+            --bg: #0f0f13;
+            --surface: #1a1a24;
+            --primary: #ff477e;
+            --secondary: #9046cf;
+            --text: #ffffff;
+            --text-muted: #a0a0b0;
+            --card-bg: rgba(26, 26, 36, 0.8);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'system-ui', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 520px;
+            background: radial-gradient(circle at top left, rgba(255, 71, 126, 0.15), transparent 40%),
+                radial-gradient(circle at bottom right, rgba(144, 70, 207, 0.15), transparent 40%);
+            min-height: 100vh;
+            box-sizing: border-box;
+            padding-bottom: 50px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            background: rgba(15, 15, 19, 0.7);
+            padding: 15px 20px;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .sticky-header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sticky-header p {
+            margin: 5px 0 0 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 24px;
+            margin: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: transform 0.2s, opacity 0.2s;
+            width: 100%;
+            display: block;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(255, 71, 126, 0.3);
+        }
+
+        button.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+        }
+
+        button:active {
+            transform: scale(0.96);
+            opacity: 0.8;
+        }
+
+        /* Mood Section */
+        .mood-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            min-height: 45px;
+        }
+
+        .mood-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .mood-btn {
+            margin-top: 0;
+            flex: 1;
+            padding: 12px 5px;
+            font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: none;
+            border-radius: 12px;
+        }
+
+        .mood-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 15px rgba(255, 71, 126, 0.4);
+        }
+
+        /* Breath */
+        .breath-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary), rgba(144, 70, 207, 0.5));
+            margin: 30px auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(255, 71, 126, 0.4);
+        }
+
+        .breath-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            width: max-content;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+
+            50% {
+                transform: scale(1.8);
+                opacity: 1;
+            }
+        }
+
+        /* Memories */
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 15px;
+            scrollbar-width: none;
+            padding-bottom: 10px;
+        }
+
+        .carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .memory-card {
+            min-width: 85%;
+            scroll-snap-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 15px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .memory-img-placeholder {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, rgba(255, 71, 126, 0.4), rgba(144, 70, 207, 0.4));
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .memory-card h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+        }
+
+        .memory-card p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Todos */
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: opacity 0.3s;
+        }
+
+        .todo-item:last-child {
+            border-bottom: none;
+        }
+
+        .todo-item.checked {
+            opacity: 0.4;
+            text-decoration: line-through;
+        }
+
+        .todo-item input {
+            width: 22px;
+            height: 22px;
+            margin-right: 15px;
+            accent-color: var(--primary);
+            border-radius: 6px;
+        }
+
+        .todo-item label {
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .todo-actions button {
+            margin-top: 0;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            top: -10px;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+            animation: fall linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
+            }
+        }
+
+        /* Reasons */
+        .reason-box {
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        /* Games */
+        .heart-box {
+            width: 100%;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .heart-emoji {
+            font-size: 35px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            user-select: none;
+            transition: top 0.3s ease-out, left 0.3s ease-out;
+            touch-action: none;
+        }
+
+        .boxes-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .gift-box {
+            flex: 1;
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s, background 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .gift-box:active {
+            transform: scale(0.9);
+        }
+
+        .gift-box.opened {
+            font-size: 1rem;
+            font-weight: 600;
+            background: rgba(255, 71, 126, 0.1);
+            color: var(--primary);
+            padding: 10px;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 20px auto;
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid white;
+            z-index: 10;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) 0deg 60deg,
+                    var(--secondary) 60deg 120deg,
+                    var(--primary) 120deg 180deg,
+                    var(--secondary) 180deg 240deg,
+                    var(--primary) 240deg 300deg,
+                    var(--secondary) 300deg 360deg);
+            transition: transform 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .wheel-result {
+            text-align: center;
+            min-height: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 15px;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: -10px;
+            opacity: 0.6;
+        }
+
+        /* Responsive */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <header class="sticky-header">
+            <h1 id="heroTitle">Seni Seviyorum</h1>
+            <p id="heroSubtitle">Biraz iyi gelsin diye...</p>
+        </header>
+
+        <main>
+            <!-- 1. Mood Section -->
+            <div class="card">
+                <h2 class="section-title">✨ Bugün nasılsın?</h2>
+                <div class="mood-text" id="moodText"></div>
+                <div class="mood-btns">
+                    <button class="mood-btn" id="mood-kutu" onclick="setMood('kutu')">Biraz Kötü</button>
+                    <button class="mood-btn" id="mood-idare" onclick="setMood('idare')">İdare Eder</button>
+                    <button class="mood-btn" id="mood-iyi" onclick="setMood('iyi')">Daha İyi</button>
+                </div>
+            </div>
+
+            <!-- 2. Pain Days Kit -->
+            <div class="card">
+                <h2 class="section-title">🩹 Ağrı Günleri Kiti</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted); text-align: center; margin-bottom: 20px;">Derin
+                    bir nefes almayı birlikte deneyelim...</p>
+
+                <div class="breath-circle" id="breathCircle">
+                    <span class="breath-text" id="breathText"></span>
+                </div>
+                <button id="breathBtn" onclick="toggleBreathing()">Nefes Egzersizini Başlat</button>
+
+                <div
+                    style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                    <p id="randomNote" style="font-style: italic; font-size: 1.05rem;"></p>
+                    <button class="secondary" onclick="showRandomNote()"
+                        style="margin: 15px auto; width: 80%; padding: 10px;">Bir Tane Daha Söyle</button>
+                </div>
+
+                <button class="secondary" onclick="scrollToGames()" style="margin-top: 10px;">Dikkatimi Dağıt
+                    🎲</button>
+                <p class="disclaimer" style="margin-top: 15px;">(Küçük bir not: Bunlar sadece sana iyi hissettirmek
+                    içindir, tıbbi bir tavsiye değil canım 💖)</p>
+            </div>
+
+            <!-- 3. Memories -->
+            <div class="card">
+                <h2 class="section-title">📸 Hatıra Kartları</h2>
+                <div class="carousel" id="memoryList"></div>
+                <button class="secondary" onclick="shuffleMemories()">Karıştır 🔀</button>
+            </div>
+
+            <!-- 4. Todos -->
+            <div class="card">
+                <h2 class="section-title">✅ Bugün Sadece Bunlar Yeter</h2>
+                <div id="todoList"></div>
+                <div class="todo-actions">
+                    <button class="secondary" onclick="resetTodos()">Sıfırla</button>
+                    <button onclick="completeTodos()">Tamamladım 🎉</button>
+                </div>
+            </div>
+
+            <!-- 5. Reasons -->
+            <div class="card">
+                <h2 class="section-title">💌 Sana İyi Gelen Nedenler</h2>
+                <div class="reason-box" id="reasonText">Bugün harika görünüyorsun.</div>
+                <button onclick="showNextReason()">Bir Tane Aç 💌</button>
+            </div>
+
+            <!-- 6. Mini Games -->
+            <div id="gamesSection" style="padding-top: 10px;">
+                <h2 class="section-title" style="margin-left: 20px; font-size: 1.3rem;">🎮 Mini Oyunlar</h2>
+
+                <!-- Catch the Heart -->
+                <div class="card">
+                    <h3 style="margin-top: 0; font-size: 1rem;">1. Kalbi Yakala <span id="heartScore"
+                            style="float: right; color: var(--primary);">Skor: 0</span></h3>
+                    <div class="heart-box" id="heartGameBox">
+                        <div class="heart-emoji" id="heartGameEmoji" onpointerdown="clickHeart()">💖</div>
+                    </div>
+                </div>
+
+                <!-- 3 Boxes -->
+                <div class="card">
+                    <h3 style="margin-top: 0; font-size: 1rem;">2. Hangi Kutu?</h3>
+                    <div class="boxes-container" id="boxesContainer">
+                        <div class="gift-box" onclick="openBox(this, 0)">🎁</div>
+                        <div class="gift-box" onclick="openBox(this, 1)">🎁</div>
+                        <div class="gift-box" onclick="openBox(this, 2)">🎁</div>
+                    </div>
+                    <button class="secondary" onclick="resetBoxes()">Yeniden Dize</button>
+                </div>
+
+                <!-- Wheel -->
+                <div class="card">
+                    <h3 style="margin-top: 0; font-size: 1rem; text-align: center;">3. Şans Çarkı</h3>
+                    <div class="wheel-wrapper">
+                        <div class="wheel-pointer"></div>
+                        <div class="wheel" id="wheel"></div>
+                    </div>
+                    <div class="wheel-result" id="wheelResult"></div>
+                    <button onclick="spinWheel()">Çevir 🎡</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        /*====================================================================
+          CONFIG - İÇERİK KİŞİSELLEŞTİRME
+        ====================================================================*/
+        const config = {
+            girlfriendName: "Gülşah",
+            nickname: "bebiş", // "bebiş", "sevgilim", "aşkım" vb.
+            heroTitle: "Seni Seviyorum {name}",
+            heroSubtitle: "Günün biraz daha güzel geçsin diye bu küçük alanı hazırladım...",
+
+            memories: [
+                // Resim eklemek istersen img kısmına URL koyabilirsin: img: "https://ornek.com/resim.jpg"
+                { img: "", title: "Seninle Olan Her An", desc: "Zamanın nasıl geçtiğini hiç anlamıyorum. Beraber olduğumuz her an benim için çok değerli." },
+                { img: "", title: "Sıcak Gülüşün", desc: "Gülüşünle bütün odayı aydınlatıp karanlıkları yok ediyorsun." },
+                { img: "", title: "Geleceğimiz", desc: "Beraber yapacağımız daha çok şey var. İyi ki hayatımdasın." },
+                { img: "", title: "Şefkatin", desc: "Bana sarıldığında sanki dünyadaki bütün sorunlar yok oluyor gibi hissediyorum." }
+            ],
+
+            reasons: [
+                "Gülüşün odayı aydınlatıyor.",
+                "Bana her zaman en büyük desteksin.",
+                "Dünyanın en güzel gözlerine sahipsin.",
+                "Sesini duymak tüm yorgunluğumu alıyor.",
+                "Birlikteyken zamanın nasıl geçtiğini anlamıyorum.",
+                "Şefkatin içimi her zaman sıcacık yapıyor.",
+                "Bana kendimi dünyanın en özel insanı hissettiriyorsun.",
+                "Her soruna en tatlı çözümleri bulabiliyorsun.",
+                "Mizah anlayışına gerçekten bayılıyorum.",
+                "Sana sarılmak tam anlamıyla evde hissettiriyor.",
+                "Hayallerimi paylaştığım en güzel insansın.",
+                "Birlikte saçmalamayı dünyadaki her şeye tercih ederim.",
+                "Beni her halimle, olduğum gibi seviyorsun.",
+                "Küçük detaylara verdiğin önem harika.",
+                "Hayata bakış açın bana her gün ilham veriyor.",
+                "Ellerini tutmak paha biçilemez bir his.",
+                "Zekanla beni her defasında şaşırtıyorsun.",
+                "Bana hep olağanüstü iyi geliyorsun.",
+                "Sadece var olman bile hayatımı güzelleştirmeye yetiyor.",
+                "Seninle her an çok tatlı bir macera."
+            ],
+
+            notes: [
+                "Ben her zaman yanındayım, unutma.",
+                "Derin bir nefes al, hepsi geçecek.",
+                "Sen sandığından çok daha güçlüsün.",
+                "Seni her şeyden çok seviyorum.",
+                "Bugün de her zamanki gibi kalbimi hızlandırıyorsun.",
+                "Gözünü kapat ve sana sımsıkı sarıldığımı hayal et."
+            ]
+        };
+
+        /*====================================================================
+          1. INIT & MOOD
+        ====================================================================*/
+        document.getElementById('heroSubtitle').innerText = config.heroSubtitle;
+        document.getElementById('heroTitle').innerText = config.heroTitle.replace('{name}', config.nickname);
+
+        let currentMood = localStorage.getItem('mini_site_mood') || 'idare';
+        const moodTexts = {
+            kutu: "Bugün biraz zor geçiyor olabilir, omuzlarına küçük bir öpücük bırakıyorum. Lütfen kendine fazla yüklenme, hepsi geçecek.",
+            idare: "Öyle böyle diyorsun... Derin bir nefes al, her şey birazdan daha iyi olacak. Ben buradayım.",
+            iyi: "Ne harika! O güzel enerjini buradan bile hissedebiliyorum. Gülüşün hiç solmasın."
+        };
+
+        function setMood(m) {
+            currentMood = m;
+            localStorage.setItem('mini_site_mood', m);
+            updateMoodUI();
+        }
+
+        function updateMoodUI() {
+            document.getElementById('moodText').innerText = moodTexts[currentMood];
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('mood-' + currentMood).classList.add('active');
+        }
+        updateMoodUI();
+
+        /*====================================================================
+          2. PAIN DAYS KIT
+        ====================================================================*/
+        let breathInterval;
+        let breathTimeout;
+        let isBreathing = false;
+
+        function toggleBreathing() {
+            if (isBreathing) {
+                stopBreathing();
+            } else {
+                const circle = document.getElementById('breathCircle');
+                const btn = document.getElementById('breathBtn');
+                const text = document.getElementById('breathText');
+
+                circle.style.animation = 'breathe 8s infinite ease-in-out';
+                btn.innerText = 'Durdur';
+                isBreathing = true;
+                text.innerText = 'Nefes Al...';
+
+                let flip = false;
+                breathInterval = setInterval(() => {
+                    flip = !flip;
+                    text.innerText = flip ? 'Nefes Ver...' : 'Nefes Al...';
+                }, 4000);
+
+                // Auto stop after 32 seconds (4 full breath cycles)
+                breathTimeout = setTimeout(() => {
+                    stopBreathing();
+                }, 32000);
+            }
+        }
+
+        function stopBreathing() {
+            const circle = document.getElementById('breathCircle');
+            const btn = document.getElementById('breathBtn');
+            const text = document.getElementById('breathText');
+
+            circle.style.animation = 'none';
+            btn.innerText = 'Nefes Egzersizini Başlat';
+            text.innerText = '';
+            clearInterval(breathInterval);
+            clearTimeout(breathTimeout);
+            isBreathing = false;
+        }
+
+        function showRandomNote() {
+            const note = config.notes[Math.floor(Math.random() * config.notes.length)];
+            document.getElementById('randomNote').innerText = note;
+        }
+        showRandomNote();
+
+        function scrollToGames() {
+            document.getElementById('gamesSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        /*====================================================================
+          3. MEMORIES
+        ====================================================================*/
+        function renderMemories() {
+            const list = document.getElementById('memoryList');
+            list.innerHTML = '';
+            config.memories.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'memory-card';
+                const bgStyle = m.img ? `background-image: url('${m.img}');` : '';
+                div.innerHTML = `
+                <div class="memory-img-placeholder" style="${bgStyle}"></div>
+                <h3>${m.title}</h3>
+                <p>${m.desc}</p>
+            `;
+                list.appendChild(div);
+            });
+        }
+
+        function shuffleMemories() {
+            config.memories.sort(() => Math.random() - 0.5);
+            renderMemories();
+        }
+        renderMemories();
+
+        /*====================================================================
+          4. TODOS
+        ====================================================================*/
+        const todos = [
+            "1 yudum su iç 💧",
+            "Yastığını düzelt 🛏️",
+            "10 saniye gözlerini kapat 😌",
+            "Derin bir nefes al 🌬️",
+            "Omuzlarını gevşet 🤗",
+            "Tatlıca bana haber ver 📞"
+        ];
+        let completedTodos = JSON.parse(localStorage.getItem('mini_site_todos') || '[]');
+
+        function renderTodos() {
+            const list = document.getElementById('todoList');
+            list.innerHTML = '';
+            todos.forEach((t, i) => {
+                const isChecked = completedTodos.includes(i);
+                const div = document.createElement('div');
+                div.className = 'todo-item' + (isChecked ? ' checked' : '');
+
+                const checkboxId = 'todo-' + i;
+                div.innerHTML = `
+                <input type="checkbox" id="${checkboxId}" ${isChecked ? 'checked' : ''}>
+                <label for="${checkboxId}">${t}</label>
+            `;
+
+                div.querySelector('input').addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        completedTodos.push(i);
+                    } else {
+                        completedTodos = completedTodos.filter(x => x !== i);
+                    }
+                    localStorage.setItem('mini_site_todos', JSON.stringify(completedTodos));
+                    renderTodos();
+                });
+                list.appendChild(div);
+            });
+        }
+
+        function resetTodos() {
+            completedTodos = [];
+            localStorage.setItem('mini_site_todos', '[]');
+            renderTodos();
+        }
+
+        function completeTodos() {
+            // Simple confetti effect
+            const colors = ['#ff477e', '#9046cf', '#ffffff', '#ffd166', '#06d6a0'];
+            for (let i = 0; i < 40; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = (Math.random() * 100) + 'vw';
+                conf.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                conf.style.background = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(conf);
+
+                // Clean up elements
+                setTimeout(() => {
+                    if (conf.parentNode) conf.parentNode.removeChild(conf);
+                }, 3500);
+            }
+        }
+        renderTodos();
+
+        /*====================================================================
+          5. REASONS
+        ====================================================================*/
+        let reasonQueue = [...config.reasons].sort(() => Math.random() - 0.5);
+
+        function showNextReason() {
+            if (reasonQueue.length === 0) {
+                reasonQueue = [...config.reasons].sort(() => Math.random() - 0.5);
+            }
+            const r = reasonQueue.pop();
+            document.getElementById('reasonText').innerText = r;
+        }
+        showNextReason(); // Show one initially
+
+        /*====================================================================
+          6. GAMES
+        ====================================================================*/
+        // Heart Game
+        let heartScore = 0;
+        function clickHeart() {
+            heartScore++;
+            document.getElementById('heartScore').innerText = 'Skor: ' + heartScore;
+            const heart = document.getElementById('heartGameEmoji');
+            const box = document.getElementById('heartGameBox');
+
+            // 35px is roughly the size of the emoji
+            const maxX = box.clientWidth - 40;
+            const maxY = box.clientHeight - 40;
+
+            // Ensure minimum 10px from edges
+            const randomX = Math.max(10, Math.random() * maxX);
+            const randomY = Math.max(10, Math.random() * maxY);
+
+            heart.style.left = randomX + 'px';
+            heart.style.top = randomY + 'px';
+        }
+
+        // Boxes Game
+        let boxRewards = [];
+        function resetBoxes() {
+            const texts = ["Sımsıkı Sarılma 🤗", "Tatlı Bir Öpücük 😘", "Mini Masaj Hediye 💆‍♀️"];
+            texts.sort(() => Math.random() - 0.5);
+            boxRewards = texts;
+
+            const boxes = document.querySelectorAll('.gift-box');
+            boxes.forEach((b) => {
+                b.innerText = '🎁';
+                b.classList.remove('opened');
+                b.style.pointerEvents = 'auto';
+            });
+        }
+
+        function openBox(element, index) {
+            element.innerText = boxRewards[index];
+            element.classList.add('opened');
+            // Disable clicking other boxes until reset
+            document.querySelectorAll('.gift-box').forEach(b => b.style.pointerEvents = 'none');
+        }
+        resetBoxes();
+
+        // Wheel Game
+        let wheelAngle = 0;
+        let isSpinning = false;
+        const wheelRewards = [
+            "Film Seçme Hakkı 🎬",
+            "Tatlı Ismarlama 🍰",
+            "Öpücük x3 😘",
+            "Yemek Seçme 🍕",
+            "Sımsıkı Sarılma 🤗",
+            "Masaj Kuponu 💆‍♀️"
+        ];
+
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+
+            const wheel = document.getElementById('wheel');
+            const result = document.getElementById('wheelResult');
+            result.innerText = 'Çevriliyor... ✨';
+
+            // Add at least 5 full rotations (1800 degrees) plus random finishing
+            const spins = Math.floor(Math.random() * 5 + 5);
+            const randomDegree = Math.floor(Math.random() * 360);
+            wheelAngle += (spins * 360) + randomDegree;
+
+            wheel.style.transform = `rotate(${wheelAngle}deg)`;
+
+            setTimeout(() => {
+                // CSS transition ends after 3s
+                const normalized = wheelAngle % 360;
+                // her bir dilim 60 derece
+                const slice = Math.floor(normalized / 60);
+
+                // CSS conic-gradient starts at top point. 
+                // Because wheel rotates clockwise, the top slice goes backwards in array
+                const index = (6 - slice) % 6;
+
+                result.innerText = "Kazandın: " + wheelRewards[index] + " 🎉";
+                isSpinning = false;
+
+                // Confetti for wheel!
+                completeTodos();
+            }, 3000);
+        }
+
+    </script>
+</body>
+
+</html>
