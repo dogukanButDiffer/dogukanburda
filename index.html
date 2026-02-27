@@ -183,51 +183,7 @@
             }
         }
 
-        /* Memories */
-        .carousel {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            gap: 15px;
-            scrollbar-width: none;
-            padding-bottom: 10px;
-        }
 
-        .carousel::-webkit-scrollbar {
-            display: none;
-        }
-
-        .memory-card {
-            min-width: 85%;
-            scroll-snap-align: center;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            padding: 15px;
-            box-sizing: border-box;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .memory-img-placeholder {
-            width: 100%;
-            height: 160px;
-            background: linear-gradient(135deg, rgba(255, 71, 126, 0.4), rgba(144, 70, 207, 0.4));
-            border-radius: 12px;
-            margin-bottom: 12px;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .memory-card h3 {
-            margin: 0 0 5px 0;
-            font-size: 1.1rem;
-        }
-
-        .memory-card p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
 
         /* Todos */
         .todo-item {
@@ -346,6 +302,9 @@
             text-align: center;
             transition: transform 0.2s, background 0.2s;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            box-sizing: border-box;
+            word-break: break-word;
+            overflow: hidden;
         }
 
         .gift-box:active {
@@ -437,20 +396,20 @@
         <main>
             <!-- 1. Mood Section -->
             <div class="card">
-                <h2 class="section-title">✨ Bugün nasılsın?</h2>
+                <h2 class="section-title">✨ Şu an nasılsın?</h2>
                 <div class="mood-text" id="moodText"></div>
                 <div class="mood-btns">
                     <button class="mood-btn" id="mood-kutu" onclick="setMood('kutu')">Biraz Kötü</button>
-                    <button class="mood-btn" id="mood-idare" onclick="setMood('idare')">İdare Eder</button>
+                    <button class="mood-btn" id="mood-idare" onclick="setMood('idare')">Ehh Orta</button>
                     <button class="mood-btn" id="mood-iyi" onclick="setMood('iyi')">Daha İyi</button>
                 </div>
             </div>
 
             <!-- 2. Pain Days Kit -->
             <div class="card">
-                <h2 class="section-title">🩹 Ağrı Günleri Kiti</h2>
-                <p style="font-size: 0.9rem; color: var(--text-muted); text-align: center; margin-bottom: 20px;">Derin
-                    bir nefes almayı birlikte deneyelim...</p>
+                <h2 class="section-title">🩹 Ağrı Zamanlarına Yardımcı</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted); text-align: center; margin-bottom: 20px;">Şimdi
+                    derin nefes alcazz...</p>
 
                 <div class="breath-circle" id="breathCircle">
                     <span class="breath-text" id="breathText"></span>
@@ -467,19 +426,24 @@
                 <button class="secondary" onclick="scrollToGames()" style="margin-top: 10px;">Dikkatimi Dağıt
                     🎲</button>
                 <p class="disclaimer" style="margin-top: 15px;">(Küçük bir not: Bunlar sadece sana iyi hissettirmek
-                    içindir, tıbbi bir tavsiye değil canım 💖)</p>
+                    içindir, tıbbi bir tavsiye diill💖)</p>
             </div>
 
-            <!-- 3. Memories -->
+            <!-- 3. Memory -->
             <div class="card">
-                <h2 class="section-title">📸 Hatıra Kartları</h2>
-                <div class="carousel" id="memoryList"></div>
-                <button class="secondary" onclick="shuffleMemories()">Karıştır 🔀</button>
+                <h2 class="section-title">📸 Biz 😍</h2>
+                <div class="single-memory"
+                    style="background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 15px; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center;">
+                    <img src="images/image1.png" alt="Biz"
+                        style="width: 100%; border-radius: 12px; margin-bottom: 15px; display: block; object-fit: cover; max-height: 400px; background: rgba(0,0,0,0.2);">
+                    <p style="margin: 0; font-size: 1rem; color: var(--text); line-height: 1.5; font-style: italic;">
+                        "Ben hep böyle yanında olcam sana bakcamm iyi olcan hep ehe."</p>
+                </div>
             </div>
 
             <!-- 4. Todos -->
             <div class="card">
-                <h2 class="section-title">✅ Bugün Sadece Bunlar Yeter</h2>
+                <h2 class="section-title">✅ Bikaç iyi gelicek şeyy </h2>
                 <div id="todoList"></div>
                 <div class="todo-actions">
                     <button class="secondary" onclick="resetTodos()">Sıfırla</button>
@@ -490,7 +454,7 @@
             <!-- 5. Reasons -->
             <div class="card">
                 <h2 class="section-title">💌 Sana İyi Gelen Nedenler</h2>
-                <div class="reason-box" id="reasonText">Bugün harika görünüyorsun.</div>
+                <div class="reason-box" id="reasonText">Bugün çok güzelsinn</div>
                 <button onclick="showNextReason()">Bir Tane Aç 💌</button>
             </div>
 
@@ -539,47 +503,30 @@
         const config = {
             girlfriendName: "Gülşah",
             nickname: "bebiş", // "bebiş", "sevgilim", "aşkım" vb.
-            heroTitle: "Seni Seviyorum {name}",
-            heroSubtitle: "Günün biraz daha güzel geçsin diye bu küçük alanı hazırladım...",
-
-            memories: [
-                // Resim eklemek istersen img kısmına URL koyabilirsin: img: "https://ornek.com/resim.jpg"
-                { img: "", title: "Seninle Olan Her An", desc: "Zamanın nasıl geçtiğini hiç anlamıyorum. Beraber olduğumuz her an benim için çok değerli." },
-                { img: "", title: "Sıcak Gülüşün", desc: "Gülüşünle bütün odayı aydınlatıp karanlıkları yok ediyorsun." },
-                { img: "", title: "Geleceğimiz", desc: "Beraber yapacağımız daha çok şey var. İyi ki hayatımdasın." },
-                { img: "", title: "Şefkatin", desc: "Bana sarıldığında sanki dünyadaki bütün sorunlar yok oluyor gibi hissediyorum." }
-            ],
+            heroTitle: "Bitaneme",
+            heroSubtitle: "Sana birazcık da olsa iyi gelebilmesi için...",
 
             reasons: [
-                "Gülüşün odayı aydınlatıyor.",
-                "Bana her zaman en büyük desteksin.",
-                "Dünyanın en güzel gözlerine sahipsin.",
-                "Sesini duymak tüm yorgunluğumu alıyor.",
-                "Birlikteyken zamanın nasıl geçtiğini anlamıyorum.",
-                "Şefkatin içimi her zaman sıcacık yapıyor.",
-                "Bana kendimi dünyanın en özel insanı hissettiriyorsun.",
-                "Her soruna en tatlı çözümleri bulabiliyorsun.",
-                "Mizah anlayışına gerçekten bayılıyorum.",
-                "Sana sarılmak tam anlamıyla evde hissettiriyor.",
-                "Hayallerimi paylaştığım en güzel insansın.",
-                "Birlikte saçmalamayı dünyadaki her şeye tercih ederim.",
-                "Beni her halimle, olduğum gibi seviyorsun.",
-                "Küçük detaylara verdiğin önem harika.",
-                "Hayata bakış açın bana her gün ilham veriyor.",
-                "Ellerini tutmak paha biçilemez bir his.",
-                "Zekanla beni her defasında şaşırtıyorsun.",
-                "Bana hep olağanüstü iyi geliyorsun.",
-                "Sadece var olman bile hayatımı güzelleştirmeye yetiyor.",
-                "Seninle her an çok tatlı bir macera."
+                "Gülünce çokk tatlı oluyosun",
+                "Ben komik ve tatlılık yapınca bana çok güzel bakıyosun",
+                "Dünyanın en tatlı bebişisin",
+                "Sesini duymak beni çok sakinleştiriyo",
+                "Birlikteyken zamanın nasıl geçtiğini anlamıyorum",
+                "Göğsüne yatmak çok güzel bişey",
+                "Sana sarılınca hep öyle kalmak istiyorum",
+                "Birlikte saçmalamak çok zevkli bisürü gülüyoruzz",
+                "Beni çok sevdiğini biliyorumm ama sen yine hep söyle ehe",
+                "Ellerini tutmak paha biçilemez bi his.",
+                "Okula gelirken seninle olcağımı bilmek çok güzel",
+                "Seninle her anımıza bayılıyorum"
             ],
 
             notes: [
-                "Ben her zaman yanındayım, unutma.",
-                "Derin bir nefes al, hepsi geçecek.",
-                "Sen sandığından çok daha güçlüsün.",
-                "Seni her şeyden çok seviyorum.",
-                "Bugün de her zamanki gibi kalbimi hızlandırıyorsun.",
-                "Gözünü kapat ve sana sımsıkı sarıldığımı hayal et."
+                "Ben her zaman, kötü olduğunda da yanındayım, unutma",
+                "Güzellce bi nefes al sakinleş, geçcek hepsi",
+                "Sen alsında çok güçlüsün ama bebiş olunca bazen yumuşuyon ehe",
+                "Seni çokk seviyorum",
+                "Gözünü kapat ve sana sımsıkı sarıldığımı hayal et"
             ]
         };
 
@@ -591,9 +538,9 @@
 
         let currentMood = localStorage.getItem('mini_site_mood') || 'idare';
         const moodTexts = {
-            kutu: "Bugün biraz zor geçiyor olabilir, omuzlarına küçük bir öpücük bırakıyorum. Lütfen kendine fazla yüklenme, hepsi geçecek.",
-            idare: "Öyle böyle diyorsun... Derin bir nefes al, her şey birazdan daha iyi olacak. Ben buradayım.",
-            iyi: "Ne harika! O güzel enerjini buradan bile hissedebiliyorum. Gülüşün hiç solmasın."
+            kutu: "Bugün biraz zor geçiyor olabilir, öpüyorum her yerindenn. Lütfen kendine fazla yüklenme, hepsi geçcek bebişim",
+            idare: "hımm orta diyosun... güzel bi nefes al, her şey birazdan daha iyi olacak. Ben yanındayım sarılıyorumm",
+            iyi: "Ağğ çok iyi! Hep gül böyle hep iyi ol mis ol bebiş ol güzeliim."
         };
 
         function setMood(m) {
@@ -665,41 +612,18 @@
             document.getElementById('gamesSection').scrollIntoView({ behavior: 'smooth' });
         }
 
-        /*====================================================================
-          3. MEMORIES
-        ====================================================================*/
-        function renderMemories() {
-            const list = document.getElementById('memoryList');
-            list.innerHTML = '';
-            config.memories.forEach(m => {
-                const div = document.createElement('div');
-                div.className = 'memory-card';
-                const bgStyle = m.img ? `background-image: url('${m.img}');` : '';
-                div.innerHTML = `
-                <div class="memory-img-placeholder" style="${bgStyle}"></div>
-                <h3>${m.title}</h3>
-                <p>${m.desc}</p>
-            `;
-                list.appendChild(div);
-            });
-        }
 
-        function shuffleMemories() {
-            config.memories.sort(() => Math.random() - 0.5);
-            renderMemories();
-        }
-        renderMemories();
 
         /*====================================================================
           4. TODOS
         ====================================================================*/
         const todos = [
-            "1 yudum su iç 💧",
-            "Yastığını düzelt 🛏️",
+            "Bolca su iç 💧",
+            "Yatağında avokadoyla yat 🥑",
             "10 saniye gözlerini kapat 😌",
-            "Derin bir nefes al 🌬️",
-            "Omuzlarını gevşet 🤗",
-            "Tatlıca bana haber ver 📞"
+            "Derin nefes al 🌬️",
+            "Biraz yogasal esneme yap 🤗",
+            "Bana da söyle susmak yok 🚫"
         ];
         let completedTodos = JSON.parse(localStorage.getItem('mini_site_todos') || '[]');
 
@@ -795,7 +719,7 @@
         // Boxes Game
         let boxRewards = [];
         function resetBoxes() {
-            const texts = ["Sımsıkı Sarılma 🤗", "Tatlı Bir Öpücük 😘", "Mini Masaj Hediye 💆‍♀️"];
+            const texts = ["Sımsıkı Sarılma 🤗", "Tatlı Bi Öpücük 😘", "Biraz Yumuşlama🙃"];
             texts.sort(() => Math.random() - 0.5);
             boxRewards = texts;
 
@@ -819,12 +743,12 @@
         let wheelAngle = 0;
         let isSpinning = false;
         const wheelRewards = [
-            "Film Seçme Hakkı 🎬",
-            "Tatlı Ismarlama 🍰",
+            "Dizi Film Seçme Hakkı 🎬",
+            "Sana Tatlı Ismarlama 🍪",
             "Öpücük x3 😘",
             "Yemek Seçme 🍕",
             "Sımsıkı Sarılma 🤗",
-            "Masaj Kuponu 💆‍♀️"
+            "Arabanın Camları Silincek 🚘"
         ];
 
         function spinWheel() {
